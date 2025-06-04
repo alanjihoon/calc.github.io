@@ -4,11 +4,21 @@
   <meta charset="UTF-8">
   <title>계산기</title>
   <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/mathquill@0.10.1/build/mathquill.css">
 </head>
 <body>
   <div class="calculator">
-    <input type="text" id="display" readonly>
+    <!-- MathQuill 입력창 추가 -->
+    <div id="mathquill-display" class="mathquill-editable"></div>
+    <input type="text" id="display">
+    
     <div class="buttons">
+      <button class="btn" id="sqrt">√</button> <!-- 추가된 부분 -->
+      <button class="btn" data-value="(">(</button>   <!-- 추가 -->
+      <button class="btn" data-value=")">)</button>   <!-- 추가 -->
+      <!-- ...existing code... -->
+      <button class="btn" id="square">x²</button> <!-- 제곱 버튼 추가 -->
+      <!-- ...existing code... -->
       <button class="btn" data-value="7">7</button>
       <button class="btn" data-value="8">8</button>
       <button class="btn" data-value="9">9</button>
@@ -26,8 +36,10 @@
       <button class="btn" id="clear">C</button>
       <button class="btn" data-value="+">+</button>
       <button class="btn" id="equals">=</button>
+      <!-- ...existing code... -->
     </div>
   </div>
+  <script src="https://cdn.jsdelivr.net/npm/mathquill@0.10.1/build/mathquill.js"></script>
   <script src="javascriptcode.js"></script>
 </body>
 </html>

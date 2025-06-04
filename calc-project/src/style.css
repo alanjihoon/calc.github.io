@@ -5,17 +5,6 @@ body {
   align-items: center;
   height: 100vh;
 }
-.mathquill-editable {
-  min-height: 40px;
-  border: 1px solid #ccc;
-  padding: 8px;
-  font-size: 1.5em;
-  background: #fff;
-  margin-bottom: 10px;
-  border-radius: 5px;
-  box-sizing: border-box;
-  cursor: text;
-}
 
 .calculator {
   background: #222;
