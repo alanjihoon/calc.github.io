@@ -1,43 +1,34 @@
-// MathQuill 연동 코드 추가
 document.addEventListener('DOMContentLoaded', function() {
-  const MQ = MathQuill.getInterface(2);
-  const mathFieldSpan = document.getElementById('mathquill-display');
-  const mathField = MQ.MathField(mathFieldSpan, {
-    spaceBehavesLikeTab: true,
-    handlers: {}
-  });
+  const mathField = document.getElementById('mathlive-display'); // math-field element 자체가 MathLive 객체!
 
   const buttons = document.querySelectorAll('.btn');
 
   buttons.forEach(button => {
     button.addEventListener('click', () => {
       const value = button.dataset.value;
+
       if (value !== undefined) {
-        mathField.write(value);
-        mathField.focus();
+        mathField.insert(value);
       } else if (button.id === 'clear') {
-        mathField.latex('');
+        mathField.setValue('');
       } else if (button.id === 'equals') {
         try {
-          let expr = mathField.latex()
+          let expr = mathField.getValue('latex')
             .replace(/\\sqrt{([^}]*)}/g, 'Math.sqrt($1)')
-            .replace(/\\cdot/g, '*')
             .replace(/\\times/g, '*')
             .replace(/\\div/g, '/')
-            .replace(/\\left\(/g, '(')
-            .replace(/\\right\)/g, ')')
+            .replace(/\\cdot/g, '*')
             .replace(/([0-9]+)\^([0-9]+)/g, 'Math.pow($1,$2)');
+
           const result = eval(expr);
-          mathField.latex(result.toString());
+          mathField.setValue(result.toString());
         } catch {
-          mathField.latex('Error');
+          mathField.setValue('Error');
         }
       } else if (button.id === 'sqrt') {
-        mathField.cmd('\\sqrt');
-        mathField.focus();
+        mathField.insert('\\sqrt{}');
       } else if (button.id === 'square') {
-        mathField.cmd('^2');
-        mathField.focus();
+        mathField.insert('^2');
       }
     });
   });
