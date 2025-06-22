@@ -1,17 +1,22 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>계산기</title>
-  <link rel="stylesheet" href="style.css">
-  <link rel="stylesheet" href="https://unpkg.com/mathlive/dist/mathlive.css">
-  <script type="module" src="https://unpkg.com/mathlive/dist/mathlive.min.mjs"></script>
+  <!-- 기존 style.css 유지 -->
+  <link rel="stylesheet" href="style.css" />
+
+  <!-- MathLive 로컬 CSS -->
+  <link rel="stylesheet" href="./css/mathlive-static.css" />
+  <link rel="stylesheet" href="./css/mathlive-fonts.css" />
 </head>
 <body>
   <div class="calculator">
-    <!-- 기존 input/textarea 대신 mathlive 입력창으로 교체 -->
+    <!-- 기존 입력창 대신 MathLive 입력창으로 변경 -->
     <math-field id="mathlive-display" style="width:100%; font-size:1.5em; margin-bottom:10px;"></math-field>
+
     <div class="buttons">
+      <!-- 기존 버튼 구조, 클래스, 색상 모두 유지 -->
       <button class="btn" id="sqrt">√</button>
       <button class="btn" data-value="(">(</button>
       <button class="btn" data-value=")">)</button>
@@ -36,8 +41,11 @@
     </div>
   </div>
 
+  <!-- MathLive 모듈 로컬 경로 -->
+  <script type="module" src="./js/mathlive.min.mjs"></script>
+
   <script type="module">
-    import { MathfieldElement } from 'https://unpkg.com/mathlive/dist/mathlive.min.mjs';
+    import { MathfieldElement } from './js/mathlive.min.mjs';
 
     if (!customElements.get('math-field')) {
       customElements.define('math-field', MathfieldElement);
@@ -45,12 +53,12 @@
 
     const mathField = document.getElementById('mathlive-display');
 
+    // 버튼 이벤트는 기존과 동일, 수식 삽입 및 계산만 MathLive API 사용
     document.querySelectorAll('.btn').forEach(button => {
       button.addEventListener('click', () => {
         const value = button.dataset.value;
 
         if (value !== undefined) {
-          // 데이터값 있는 버튼은 mathfield에 삽입
           mathField.executeCommand('insert', value);
         } else if (button.id === 'clear') {
           mathField.setValue('');
@@ -58,7 +66,6 @@
           try {
             let latex = mathField.getValue('latex');
 
-            // 간단한 LaTeX -> JS 수식 변환
             let expr = latex
               .replace(/\\sqrt{([^}]*)}/g, 'Math.sqrt($1)')
               .replace(/\\times/g, '*')

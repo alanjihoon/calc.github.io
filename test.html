@@ -1,17 +1,21 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>계산기</title>
-  <link rel="stylesheet" href="style.css">
-  <link rel="stylesheet" href="https://unpkg.com/mathlive/dist/mathlive.css">
-  <script type="module" src="https://unpkg.com/mathlive/dist/mathlive.min.mjs"></script>
+  <!-- 기존 style.css 유지 -->
+  <link rel="stylesheet" href="style.css" />
+
+  <!-- MathLive 공식 CDN CSS (폰트 포함) -->
+  <link rel="stylesheet" href="https://unpkg.com/mathlive/dist/mathlive.core.css">
 </head>
 <body>
   <div class="calculator">
-    <!-- 기존 input/textarea 대신 mathlive 입력창으로 교체 -->
-    <math-field id="mathlive-display" style="width:100%; font-size:1.5em; margin-bottom:10px;"></math-field>
+    <!-- 기존 입력창 대신 MathLive 입력창으로 변경 -->
+    <math-field id="math-input" style="width:100%; font-size:1.5em; margin-bottom:10px;"></math-field>
+
     <div class="buttons">
+      <!-- 기존 버튼 구조, 클래스, 색상 모두 유지 -->
       <button class="btn" id="sqrt">√</button>
       <button class="btn" data-value="(">(</button>
       <button class="btn" data-value=")">)</button>
@@ -33,50 +37,60 @@
       <button class="btn" id="clear">C</button>
       <button class="btn" data-value="+">+</button>
       <button class="btn" id="equals">=</button>
+
+      <!-- 삼각함수 버튼: data-function 속성 추가 -->
+      <button class="btn" data-function="sin">sin</button>
+      <button class="btn" data-function="cos">cos</button>
+      <button class="btn" data-function="tan">tan</button>
     </div>
   </div>
 
-  <script type="module">
-    import { MathfieldElement } from 'https://unpkg.com/mathlive/dist/mathlive.min.mjs';
-
-    if (!customElements.get('math-field')) {
-      customElements.define('math-field', MathfieldElement);
+  <!-- UMD 빌드: CORS 문제 없이 MathLive 로드 -->
+  <script src="https://unpkg.com/mathlive"></script>
+  <script>
+    // MathLive가 로드되면 math-field 커스텀 엘리먼트가 정의되어 있지 않을 경우 정의
+    if (!customElements.get('math-field') && MathLive && MathLive.MathfieldElement) {
+      customElements.define('math-field', MathLive.MathfieldElement);
     }
+    
+    const mathField = document.getElementById('math-input');
 
-    const mathField = document.getElementById('mathlive-display');
-
+    // 모든 버튼에 이벤트 등록: data-value, id, data-function 속성 처리
     document.querySelectorAll('.btn').forEach(button => {
       button.addEventListener('click', () => {
         const value = button.dataset.value;
+        const func  = button.dataset.function;
 
         if (value !== undefined) {
-          // 데이터값 있는 버튼은 mathfield에 삽입
+          // 일반 값 버튼 처리
           mathField.executeCommand('insert', value);
         } else if (button.id === 'clear') {
           mathField.setValue('');
         } else if (button.id === 'equals') {
           try {
             let latex = mathField.getValue('latex');
-
-            // 간단한 LaTeX -> JS 수식 변환
             let expr = latex
               .replace(/\\sqrt{([^}]*)}/g, 'Math.sqrt($1)')
               .replace(/\\times/g, '*')
               .replace(/\\div/g, '/')
               .replace(/\\cdot/g, '*')
               .replace(/\^([0-9]+)/g, '**$1');
-
             const result = eval(expr);
-
             mathField.setValue(result.toString());
-          } catch {
+          } catch (e) {
             mathField.setValue('Error');
           }
         } else if (button.id === 'sqrt') {
+          // 제곱근 버튼 처리: \sqrt{} 삽입 후 괄호 내부로 커서 이동
           mathField.executeCommand('insert', '\\sqrt{}');
           mathField.executeCommand('moveToPreviousPlaceholder');
         } else if (button.id === 'square') {
+          // 제곱 버튼 처리: ^2 삽입
           mathField.executeCommand('insert', '^2');
+        } else if (func !== undefined) {
+          // 삼각함수 버튼 처리: \sin( 또는 \cos(, \tan( 삽입
+          mathField.executeCommand('insert', '\\' + func + '(');
+          // 추가로 자리 이동 커맨드를 넣을 수 있음 (예: moveToPreviousPlaceholder)
         }
       });
     });
