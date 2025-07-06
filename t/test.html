@@ -1,18 +1,9 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <title>달력 예제</title>
-  <style>
-    body { font-family: '맑은 고딕', Arial, sans-serif; }
-    table { border-collapse: collapse; margin-top: 20px; }
-    th, td { border: 1px solid #ccc; width: 40px; height: 40px; text-align: center; }
-    th { background: #f0f0f0; }
-    .today { background: #ffe082; }
-  </style>
-</head>
-<body>
-  <h2>달력</h2>
+  
+  </script>
+
   <input type="month" id="monthInput">
   <button onclick="drawCalendar()">달력 보기</button>
   <div id="calendar"></div>
@@ -32,10 +23,8 @@
 
       for (let i = 0; i < firstDay; i++) html += '<td></td>';
       for (let date = 1; date <= lastDate; date++) {
-        const today = new Date();
-        const isToday = today.getFullYear() === year && (today.getMonth() + 1) === month && today.getDate() === date;
         if ((firstDay + date - 1) % 7 === 0 && date !== 1) html += '</tr><tr>';
-        html += `<td${isToday ? ' class="today"' : ''}>${date}</td>`;
+        html += `<td>${date}</td>`;
       }
       html += '</tr></table>';
       document.getElementById('calendar').innerHTML = html;
